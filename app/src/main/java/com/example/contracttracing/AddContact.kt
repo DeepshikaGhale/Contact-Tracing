@@ -2,12 +2,14 @@ package com.example.contracttracing
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import com.example.contracttracing.databinding.ActivityAddContactBinding
 
 class AddContact : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddContactBinding
+    var contactList = ContactList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -15,11 +17,13 @@ class AddContact : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.addContactBtn.setOnClickListener(){
-            val name = binding.nameId.text.toString()
-            val number = binding.phoneNumberId.text.toString()
+            var name = binding.nameId.text.toString()
+            var number = binding.phoneNumberId.text.toString()
 
             if(name.isNotBlank() && number.isNotBlank()){
                 addContact(name, number)
+                name = ""
+                number = ""
             }else{
                 Toast.makeText(this, "Please enter required field", Toast.LENGTH_SHORT).show()
             }
@@ -29,10 +33,10 @@ class AddContact : AppCompatActivity() {
     }
 
     private fun addContact(name:String, number:String){
-
         var contact = ContactModel(name, number)
-
-
+        contactList.contactList.add(contact)
+        print(contactList.contactList.size)
+        Log.d("length", contactList.contactList.size.toString())
 
     }
 }

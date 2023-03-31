@@ -67,6 +67,7 @@
     </LinearLayout>
 
     <Button
+        android:id="@+id/addContactBtn"
         android:layout_margin="16dp"
         android:text="@string/add_contact"
         android:layout_width="match_parent"

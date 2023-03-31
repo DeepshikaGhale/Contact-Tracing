@@ -5,8 +5,6 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.ArrayAdapter
-import android.widget.Toast
 import com.example.contracttracing.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -20,8 +18,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater) //
         setContentView(binding.root)
 
-       contacts.contactList.add(ContactModel("Deepshikha", "9808129230"))
-       contacts.contactList.add(ContactModel("Deepshikha", "9808129230"))
+       contacts.contactList.add(ContactModel("Deepshikha Ghale", "123-234-45678"))
+       contacts.contactList.add(ContactModel("Daniel Gurung", "321-234-7654"))
+       contacts.contactList.add(ContactModel("Ram Prasad", "098-231-5673"))
 
         Log.d("length", contacts.contactList.size.toString())
 
@@ -33,7 +32,6 @@ class MainActivity : AppCompatActivity() {
         binding.addContact.setOnClickListener(){
             val intent = Intent(this, AddContact::class.java)
             startActivity(intent)
-
         }
     }
 

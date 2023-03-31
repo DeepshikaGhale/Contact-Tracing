@@ -1,8 +1,8 @@
 package com.example.contracttracing
 
 class ContactModel {
-    private val name: String
-    private val number: String
+     val name: String
+     val number: String
 
     constructor(name: String, number: String){
         this.name = name

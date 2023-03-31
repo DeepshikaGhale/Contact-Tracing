@@ -21,7 +21,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
        contacts.contactList.add(ContactModel("Deepshikha", "9808129230"))
-        contacts.contactList.add(ContactModel("Deepshikha", "9808129230"))
+       contacts.contactList.add(ContactModel("Deepshikha", "9808129230"))
+
         Log.d("length", contacts.contactList.size.toString())
 
         //show list in view

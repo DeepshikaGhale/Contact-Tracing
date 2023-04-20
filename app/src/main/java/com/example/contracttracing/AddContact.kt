@@ -9,11 +9,20 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.ActionBar
+import androidx.lifecycle.ViewModelProvider
+import com.example.contracttracing.database.AppDatabase
+import com.example.contracttracing.database.Contact
+import com.example.contracttracing.database.ContactViewModel
 import com.example.contracttracing.databinding.ActivityAddContactBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class AddContact : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddContactBinding
+    private lateinit var appDatabase: AppDatabase
+
     var contactList = ContactList()
 
     //variable to hold the value for contact modal
@@ -24,6 +33,9 @@ class AddContact : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAddContactBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        //create database
+        appDatabase = AppDatabase.getDatabase(this)
 
         //show back button
         var actionBar = supportActionBar
@@ -59,7 +71,9 @@ class AddContact : AppCompatActivity() {
 
         // field validation
         if(name.isNotBlank() && number.isNotBlank()){
-            addContact(name, number)
+            val contact = Contact(null, name, number)
+            writeData(contact)
+//            addContact(name, number)
             binding.nameId.text.clear()
             binding.phoneNumberId.text.clear()
         }else{
@@ -84,5 +98,12 @@ class AddContact : AppCompatActivity() {
             binding.nameId.setText(contactName)
             binding.phoneNumberId.setText(contactNumber)
         }
+    }
+
+    private fun writeData(contact: Contact){
+        GlobalScope.launch (Dispatchers.IO){
+            appDatabase.contactDao().insertContact(contact)
+        }
+        Toast.makeText(this, "Data has been successfully added.", Toast.LENGTH_SHORT).show()
     }
 }

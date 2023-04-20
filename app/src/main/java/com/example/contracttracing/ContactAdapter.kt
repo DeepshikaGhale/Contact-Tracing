@@ -5,11 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
+import com.example.contracttracing.database.Contact
 
-class ContactAdapter(private val context: Context, private val contactList: MutableList<ContactModel>) : BaseAdapter() {
+class ContactAdapter(private val context: Context, val deleteContact: () -> Boolean,val editContact: ()-> Boolean, private val contactList: MutableList<Contact>) : BaseAdapter() {
     private lateinit var name: TextView
     private lateinit var contactNum: TextView
+    private lateinit var delete: Button
+    private lateinit var edit: Button
 
     override fun getCount(): Int {
         return contactList.size
@@ -28,9 +33,20 @@ class ContactAdapter(private val context: Context, private val contactList: Muta
         contactView = LayoutInflater.from(context).inflate(R.layout.contact_list_item, parentView, false)
         name = contactView.findViewById(R.id.contactName)
         contactNum = contactView.findViewById(R.id.contactNumber)
+        delete = contactView.findViewById(R.id.deleteBtnId)
+        edit = contactView.findViewById(R.id.editBtnId)
 
         name.text = contactList[position].name
         contactNum.text = contactList[position].number
+
+        delete.setOnClickListener(){
+            deleteContact()
+        }
+
+
+        edit.setOnClickListener(){
+            editContact()
+        }
 
         return contactView
     }

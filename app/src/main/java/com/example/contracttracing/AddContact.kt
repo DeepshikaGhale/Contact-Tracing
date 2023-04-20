@@ -16,6 +16,10 @@ class AddContact : AppCompatActivity() {
     private lateinit var binding: ActivityAddContactBinding
     var contactList = ContactList()
 
+    //variable to hold the value for contact modal
+    var contactName: String? = null
+    var contactNumber: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddContactBinding.inflate(layoutInflater)
@@ -29,26 +33,38 @@ class AddContact : AppCompatActivity() {
             actionBar.title ="Add Contact"
         }
 
-//        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
-//            override fun handleOnBackPressed() {
-//               this@AddContact.finish()
-//            }
-//        })
+        //get contacts data from last activity
+        contactName= intent.getStringExtra("name")
+        contactNumber = intent.getStringExtra("number")
+
+        //set value if there is data from last activity
+        setValue()
+
+        Log.d("data-contact", "$contactName $contactNumber")
 
         binding.addContactBtn.setOnClickListener(){
-            var name = binding.nameId.text.toString()
-            var number = binding.phoneNumberId.text.toString()
-
-            if(name.isNotBlank() && number.isNotBlank()){
-                addContact(name, number)
-                binding.nameId.text.clear()
-                binding.phoneNumberId.text.clear()
+            if(contactName == null && contactNumber == null){
+                getValueFromView()
             }else{
-                Toast.makeText(this, "Please enter required field", Toast.LENGTH_SHORT).show()
+                val contactData = ContactModel(contactName.toString(), contactNumber.toString())
+                editContact(contactData)
             }
         }
+    }
 
+    //get the contact data from user
+    private fun getValueFromView(){
+        var name = binding.nameId.text.toString()
+        var number = binding.phoneNumberId.text.toString()
 
+        // field validation
+        if(name.isNotBlank() && number.isNotBlank()){
+            addContact(name, number)
+            binding.nameId.text.clear()
+            binding.phoneNumberId.text.clear()
+        }else{
+            Toast.makeText(this, "Please enter required field", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun addContact(name:String, number:String){
@@ -56,7 +72,17 @@ class AddContact : AppCompatActivity() {
         contactList.contactList.add(contact)
         print(contactList.contactList.size)
         Log.d("length", contactList.contactList.size.toString())
-
         Toast.makeText(this, "Contact added successfully.", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun editContact(contact: ContactModel){
+
+    }
+
+    private fun setValue(){
+        if(contactName != null && contactNumber != null){
+            binding.nameId.setText(contactName)
+            binding.phoneNumberId.setText(contactNumber)
+        }
     }
 }

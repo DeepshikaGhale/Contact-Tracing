@@ -5,6 +5,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.AdapterView
+import android.widget.Toast
 import com.example.contracttracing.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -21,6 +23,12 @@ class MainActivity : AppCompatActivity() {
        contacts.contactList.add(ContactModel("Deepshikha Ghale", "123-234-45678"))
        contacts.contactList.add(ContactModel("Daniel Gurung", "321-234-7654"))
        contacts.contactList.add(ContactModel("Ram Prasad", "098-231-5673"))
+        contacts.contactList.add(ContactModel("Deepshikha Ghale", "123-234-45678"))
+        contacts.contactList.add(ContactModel("Daniel Gurung", "321-234-7654"))
+        contacts.contactList.add(ContactModel("Ram Prasad", "098-231-5673"))
+        contacts.contactList.add(ContactModel("Deepshikha Ghale", "123-234-45678"))
+        contacts.contactList.add(ContactModel("Daniel Gurung", "321-234-7654"))
+        contacts.contactList.add(ContactModel("Ram Prasad", "098-231-5673"))
 
         Log.d("length", contacts.contactList.size.toString())
 
@@ -33,6 +41,21 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, AddContact::class.java)
             startActivity(intent)
         }
+
+        binding.contactList.onItemClickListener = AdapterView.OnItemClickListener{
+            parent, view, position, id -> onClickEdit(contacts.contactList[id.toInt()], id.toInt())
+        }
+
+
+    }
+
+    //called when user clicks on the list item
+    fun onClickEdit(contact: ContactModel, key: Int){
+        val intent = Intent(this, AddContact::class.java)
+        intent.putExtra("id", key )
+        intent.putExtra("name", contact.name)
+        intent.putExtra("number", contact.number)
+        startActivity(intent)
     }
 
 

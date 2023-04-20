@@ -72,7 +72,6 @@ class AddContact : AppCompatActivity() {
         contactList.contactList.add(contact)
         print(contactList.contactList.size)
         Log.d("length", contactList.contactList.size.toString())
-
         Toast.makeText(this, "Contact added successfully.", Toast.LENGTH_SHORT).show()
     }
 

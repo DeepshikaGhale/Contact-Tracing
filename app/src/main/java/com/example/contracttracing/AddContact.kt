@@ -16,6 +16,7 @@ import com.example.contracttracing.database.ContactViewModel
 import com.example.contracttracing.databinding.ActivityAddContactBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 class AddContact : AppCompatActivity() {
@@ -28,6 +29,7 @@ class AddContact : AppCompatActivity() {
     //variable to hold the value for contact modal
     var contactName: String? = null
     var contactNumber: String? = null
+    var id: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,20 +48,21 @@ class AddContact : AppCompatActivity() {
         }
 
         //get contacts data from last activity
+
         contactName= intent.getStringExtra("name")
         contactNumber = intent.getStringExtra("number")
+        id = intent.getIntExtra("id", 0)
 
         //set value if there is data from last activity
         setValue()
-
-        Log.d("data-contact", "$contactName $contactNumber")
 
         binding.addContactBtn.setOnClickListener(){
             if(contactName == null && contactNumber == null){
                 getValueFromView()
             }else{
-                val contactData = ContactModel(contactName.toString(), contactNumber.toString())
-                editContact(contactData)
+                val contactData = Contact(id, contactName.toString(), contactNumber.toString())
+                Log.d("data-contact", "$id, $contactName, $contactNumber")
+                updateData(contactData)
             }
         }
     }
@@ -80,19 +83,6 @@ class AddContact : AppCompatActivity() {
             Toast.makeText(this, "Please enter required field", Toast.LENGTH_SHORT).show()
         }
     }
-
-    private fun addContact(name:String, number:String){
-        var contact = ContactModel(name, number)
-        contactList.contactList.add(contact)
-        print(contactList.contactList.size)
-        Log.d("length", contactList.contactList.size.toString())
-        Toast.makeText(this, "Contact added successfully.", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun editContact(contact: ContactModel){
-
-    }
-
     private fun setValue(){
         if(contactName != null && contactNumber != null){
             binding.nameId.setText(contactName)
@@ -105,5 +95,25 @@ class AddContact : AppCompatActivity() {
             appDatabase.contactDao().insertContact(contact)
         }
         Toast.makeText(this, "Data has been successfully added.", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun updateData(contact: Contact){
+        var name = binding.nameId.text.toString()
+        var number = binding.phoneNumberId.text.toString()
+
+        if(name.isNotBlank() && number.isNotBlank()){
+
+            GlobalScope.launch(Dispatchers.IO) {
+                appDatabase.contactDao().updateContact(name, number, id.toString().toInt())
+                finish()
+            }
+            Toast.makeText(this, "Data has been successfully updated.", Toast.LENGTH_SHORT).show()
+
+            binding.nameId.text.clear()
+            binding.phoneNumberId.text.clear()
+        }else{
+            Toast.makeText(this, "Please enter required field", Toast.LENGTH_SHORT).show()
+        }
+
     }
 }

@@ -1,6 +1,7 @@
 package com.example.contracttracing
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +10,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import com.example.contracttracing.database.Contact
 
-class ContactAdapter(private val context: Context, val deleteContact: () -> Boolean,val editContact: ()-> Boolean, private val contactList: MutableList<Contact>) : BaseAdapter() {
+class ContactAdapter(private val context: Context, private val contactList: MutableList<Contact>) : BaseAdapter() {
     private lateinit var name: TextView
     private lateinit var contactNum: TextView
     private lateinit var delete: ImageButton
@@ -38,13 +39,17 @@ class ContactAdapter(private val context: Context, val deleteContact: () -> Bool
         name.text = contactList[position].name
         contactNum.text = contactList[position].number
 
-        delete.setOnClickListener(){
-            deleteContact()
+        edit.setOnClickListener(){
+            val intent = Intent(context, AddContact::class.java)
+            intent.putExtra("id", contactList[position].id )
+            intent.putExtra("name", contactList[position].name)
+            intent.putExtra("number", contactList[position].number)
+
+                parentView?.context?.startActivity(intent)
         }
 
 
-        edit.setOnClickListener(){
-            editContact()
+        delete.setOnClickListener(){
         }
 
         return contactView

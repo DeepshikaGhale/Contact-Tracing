@@ -19,4 +19,7 @@ interface ContactDAO {
 
     @Delete
     fun deleteContact(contact: Contact)
+
+    @Query("UPDATE contact_table SET name=:name, number=:number WHERE id = :id")
+    fun updateContact(name: String, number: String, id: Int)
 }

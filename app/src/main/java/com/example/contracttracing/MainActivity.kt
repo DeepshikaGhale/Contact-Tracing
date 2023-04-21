@@ -5,7 +5,10 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.AdapterView
+import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.Observer
@@ -19,12 +22,9 @@ import kotlinx.coroutines.withContext
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-//    private lateinit var appDatabase: AppDatabase
     private lateinit var contactViewModel: ContactViewModel
 
-//    var contacts = ContactList()
     var contacts : MutableList<Contact> = mutableListOf()
-    var test = false
 
     private var customContactListAdapter: ContactAdapter? = null
 
@@ -33,21 +33,13 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater) //
         setContentView(binding.root)
 
-        //create database
-//        appDatabase = AppDatabase.getDatabase(this)
-
+        //connect to view model
         contactViewModel = ViewModelProvider(this).get(ContactViewModel::class.java)
         contactViewModel.readAllContactData.observe(this, Observer { contacts ->
             //show list in view
             //use custom array adapter and defines an array
             customContactListAdapter = ContactAdapter(this,
-                fun(): Boolean {
-                    Toast.makeText(this, "delete", Toast.LENGTH_SHORT).show()
-                    return true
-                }, fun(): Boolean{
-                    Toast.makeText(this, "edit", Toast.LENGTH_SHORT).show()
-                    return true
-            }, contacts.toMutableList())
+                contacts.toMutableList())
             binding.contactList.adapter = customContactListAdapter
 
             binding.addContact.setOnClickListener(){
@@ -58,7 +50,19 @@ class MainActivity : AppCompatActivity() {
             binding.contactList.onItemClickListener = AdapterView.OnItemClickListener{
                     parent, view, position, id ->
 
-                onClickEdit(contacts[id.toInt()], id.toInt(), )
+                view.findViewById<ImageButton>(R.id.edit).setOnClickListener(){
+                    onClickEdit(contacts[id.toInt()], id.toInt())
+                    Toast.makeText(this, "Edit", Toast.LENGTH_SHORT).show()
+                }
+
+                var viewModel = parent.adapter.getView(position, view, parent)
+
+
+                Toast.makeText(this, "Edit", Toast.LENGTH_SHORT).show()
+//                view.findViewById<ImageButton>(R.id.delete).setOnClickListener(){
+//                    onClickEdit(contacts[id.toInt()], id.toInt())
+//                    Toast.makeText(this, "Delete", Toast.LENGTH_SHORT).show()
+//                }
             } })
 
             Log.d("contacts-size", contacts.size.toString())
@@ -79,18 +83,5 @@ class MainActivity : AppCompatActivity() {
         intent.putExtra("number", contact.number)
         startActivity(intent)
     }
-
-    private suspend fun displayContactsData(contacts: MutableList<Contact>){
-            withContext(Dispatchers.Main){
-
-            }
-    }
-
-    private fun readData(){
-        lateinit var dbContacts: MutableList<Contact>
-
-
-    }
-
 
 }

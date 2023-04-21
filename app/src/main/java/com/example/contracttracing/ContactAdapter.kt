@@ -38,32 +38,38 @@ class ContactAdapter(private val context: Context, val deleteContact: (contact: 
         delete = contactView.findViewById(R.id.deleteBtnId)
         edit = contactView.findViewById(R.id.editBtnId)
 
+        //pass contact list value
         name.text = contactList[position].name
         contactNum.text = contactList[position].number
 
+        //when user clicks on the edit button
         edit.setOnClickListener(){
             val intent = Intent(context, AddContact::class.java)
             intent.putExtra("id", contactList[position].id )
             intent.putExtra("name", contactList[position].name)
             intent.putExtra("number", contactList[position].number)
 
-                parentView?.context?.startActivity(intent)
+            parentView?.context?.startActivity(intent)
         }
 
-
+        //when user clicks on delete button, alert dialog box is called
         delete.setOnClickListener(){
             val builder = AlertDialog.Builder(context)
             builder.setTitle("Delete Contact")
             builder.setMessage("Do you want to delete this contact?")
+            //delete button
             builder.setPositiveButton(android.R.string.ok){
-                dialog, which ->
+                _, _ ->
+                // deleteContact function is passed from the adapter's parameter
+                // the functionality of the deleteContact is on main activity
+                // the value of contacts is passed through the adapter
                 deleteContact(contactList[position])
                 Toast.makeText(context, android.R.string.ok, Toast.LENGTH_SHORT).show()
             }
 
+            //cancel the delete operation
             builder.setNegativeButton(android.R.string.cancel){
-                    dialog, which ->
-                Toast.makeText(context, android.R.string.cancel, Toast.LENGTH_SHORT).show()
+                    _, _ ->
             }
             builder.show()
         }

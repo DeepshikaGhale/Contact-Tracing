@@ -5,13 +5,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:gravity="center"
+    android:layout_gravity="center"
     tools:context=".SplashScreen">
-
+<!--    Image for splash screen-->
+    <ImageView
+        android:src="@drawable/splash_icon"
+        android:padding="10dp"
+        android:background="@drawable/profile_bg"
+        android:layout_margin="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+<!--text view for displaying text -->
     <TextView
         android:gravity="center"
         android:layout_gravity="center"
         android:text="@string/app_name"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>

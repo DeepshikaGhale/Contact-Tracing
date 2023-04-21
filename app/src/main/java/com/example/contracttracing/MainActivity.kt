@@ -13,16 +13,20 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.example.contracttracing.database.AppDatabase
 import com.example.contracttracing.database.Contact
 import com.example.contracttracing.database.ContactViewModel
 import com.example.contracttracing.databinding.ActivityMainBinding
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var contactViewModel: ContactViewModel
+    private lateinit var appDatabase: AppDatabase
 
     var contacts : MutableList<Contact> = mutableListOf()
 
@@ -33,12 +37,18 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater) //
         setContentView(binding.root)
 
+        appDatabase = AppDatabase.getDatabase(this)
+
         //connect to view model
         contactViewModel = ViewModelProvider(this).get(ContactViewModel::class.java)
         contactViewModel.readAllContactData.observe(this, Observer { contacts ->
             //show list in view
             //use custom array adapter and defines an array
             customContactListAdapter = ContactAdapter(this,
+                fun(contact:Contact): Boolean{
+                    deleteContact(contact)
+                    return true
+                },
                 contacts.toMutableList())
             binding.contactList.adapter = customContactListAdapter
 
@@ -47,41 +57,29 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
 
-            binding.contactList.onItemClickListener = AdapterView.OnItemClickListener{
-                    parent, view, position, id ->
-
-                view.findViewById<ImageButton>(R.id.edit).setOnClickListener(){
-                    onClickEdit(contacts[id.toInt()], id.toInt())
-                    Toast.makeText(this, "Edit", Toast.LENGTH_SHORT).show()
-                }
-
-                var viewModel = parent.adapter.getView(position, view, parent)
 
 
-                Toast.makeText(this, "Edit", Toast.LENGTH_SHORT).show()
-//                view.findViewById<ImageButton>(R.id.delete).setOnClickListener(){
+//            binding.contactList.onItemClickListener = AdapterView.OnItemClickListener{
+//                    parent, view, position, id ->
+//
+//                view.findViewById<ImageButton>(R.id.edit).setOnClickListener(){
 //                    onClickEdit(contacts[id.toInt()], id.toInt())
-//                    Toast.makeText(this, "Delete", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(this, "Edit", Toast.LENGTH_SHORT).show()
 //                }
-            } })
-
-            Log.d("contacts-size", contacts.size.toString())
-
-
-            Log.d("length", contacts.size.toString())
+//            }
+        })
 
 
 
 
     }
 
-    //called when user clicks on the list item
-    fun onClickEdit(contact: Contact, key: Int){
-        val intent = Intent(this, AddContact::class.java)
-        intent.putExtra("id", key )
-        intent.putExtra("name", contact.name)
-        intent.putExtra("number", contact.number)
-        startActivity(intent)
+    //called when user clicks on the delete button
+    fun deleteContact(contact: Contact){
+        GlobalScope.launch {
+            appDatabase.contactDao().deleteContact(contact)
+        }
+        Toast.makeText(this, "Successfully Deleted!!", Toast.LENGTH_SHORT).show()
     }
 
 }

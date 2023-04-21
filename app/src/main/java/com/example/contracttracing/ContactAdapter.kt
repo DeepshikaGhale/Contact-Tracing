@@ -1,5 +1,6 @@
 package com.example.contracttracing
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
@@ -8,9 +9,10 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import com.example.contracttracing.database.Contact
 
-class ContactAdapter(private val context: Context, private val contactList: MutableList<Contact>) : BaseAdapter() {
+class ContactAdapter(private val context: Context, val deleteContact: (contact: Contact)-> Boolean ,private val contactList: MutableList<Contact>) : BaseAdapter() {
     private lateinit var name: TextView
     private lateinit var contactNum: TextView
     private lateinit var delete: ImageButton
@@ -50,6 +52,20 @@ class ContactAdapter(private val context: Context, private val contactList: Muta
 
 
         delete.setOnClickListener(){
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Delete Contact")
+            builder.setMessage("Do you want to delete this contact?")
+            builder.setPositiveButton(android.R.string.ok){
+                dialog, which ->
+                deleteContact(contactList[position])
+                Toast.makeText(context, android.R.string.ok, Toast.LENGTH_SHORT).show()
+            }
+
+            builder.setNegativeButton(android.R.string.cancel){
+                    dialog, which ->
+                Toast.makeText(context, android.R.string.cancel, Toast.LENGTH_SHORT).show()
+            }
+            builder.show()
         }
 
         return contactView

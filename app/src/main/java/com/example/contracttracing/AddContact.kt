@@ -24,8 +24,6 @@ class AddContact : AppCompatActivity() {
     private lateinit var binding: ActivityAddContactBinding
     private lateinit var appDatabase: AppDatabase
 
-    var contactList = ContactList()
-
     //variable to hold the value for contact modal
     var contactName: String? = null
     var contactNumber: String? = null
@@ -131,8 +129,8 @@ class AddContact : AppCompatActivity() {
     private fun validateNumber(number: String): Boolean{
         if(number.length < 10 || number.length > 10){
             Toast.makeText(this, "Phone Number should of 10 digits.", Toast.LENGTH_SHORT).show()
-            return  true
+            return  false
         }
-        return  false
+        return  true
     }
 }

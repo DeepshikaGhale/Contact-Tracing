@@ -5,16 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
-import android.widget.Toast
 import com.example.contracttracing.database.Contact
 
 class ContactAdapter(private val context: Context, val deleteContact: () -> Boolean,val editContact: ()-> Boolean, private val contactList: MutableList<Contact>) : BaseAdapter() {
     private lateinit var name: TextView
     private lateinit var contactNum: TextView
-    private lateinit var delete: Button
-    private lateinit var edit: Button
+    private lateinit var delete: ImageButton
+    private lateinit var edit: ImageButton
 
     override fun getCount(): Int {
         return contactList.size

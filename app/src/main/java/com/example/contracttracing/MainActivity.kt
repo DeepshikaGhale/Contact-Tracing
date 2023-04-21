@@ -1,6 +1,7 @@
 package com.example.contracttracing
 
 import android.R
+import android.app.AlertDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -25,6 +26,8 @@ import kotlinx.coroutines.withContext
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+
+    //set up database
     private lateinit var contactViewModel: ContactViewModel
     private lateinit var appDatabase: AppDatabase
 
@@ -37,11 +40,13 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater) //
         setContentView(binding.root)
 
+        //connect to APP DATABASE
         appDatabase = AppDatabase.getDatabase(this)
 
         //connect to view model
         contactViewModel = ViewModelProvider(this).get(ContactViewModel::class.java)
         contactViewModel.readAllContactData.observe(this, Observer { contacts ->
+
             //show list in view
             //use custom array adapter and defines an array
             customContactListAdapter = ContactAdapter(this,
@@ -50,32 +55,34 @@ class MainActivity : AppCompatActivity() {
                     return true
                 },
                 contacts.toMutableList())
+
             binding.contactList.adapter = customContactListAdapter
 
-            binding.addContact.setOnClickListener(){
-                val intent = Intent(this, AddContact::class.java)
-                startActivity(intent)
-            }
-
-
-
-//            binding.contactList.onItemClickListener = AdapterView.OnItemClickListener{
-//                    parent, view, position, id ->
-//
-//                view.findViewById<ImageButton>(R.id.edit).setOnClickListener(){
-//                    onClickEdit(contacts[id.toInt()], id.toInt())
-//                    Toast.makeText(this, "Edit", Toast.LENGTH_SHORT).show()
-//                }
-//            }
         })
 
+        //when user presses on floating action button
+        binding.addContact.setOnClickListener(){
+            val intent = Intent(this, AddContact::class.java)
+            startActivity(intent)
+        }
 
-
-
+        binding.contactList.onItemClickListener = AdapterView.OnItemClickListener{
+                parent, view, position, id ->
+                showContactDetails(contacts[position])
+        }
     }
 
+    //show when user taps on list item
+    private fun showContactDetails(contact: Contact){
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Name: ${contact.name}")
+        builder.setMessage("Phone Number: ${contact.number}")
+        builder.show()
+    }
+
+
     //called when user clicks on the delete button
-    fun deleteContact(contact: Contact){
+    private fun deleteContact(contact: Contact){
         GlobalScope.launch {
             appDatabase.contactDao().deleteContact(contact)
         }

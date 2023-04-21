@@ -36,16 +36,17 @@ class AddContact : AppCompatActivity() {
         binding = ActivityAddContactBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //create database
-        appDatabase = AppDatabase.getDatabase(this)
-
+        //action bar
         //show back button
         var actionBar = supportActionBar
 
         if (actionBar != null){
-//            actionBar.setDisplayHomeAsUpEnabled(true)
+            actionBar.setDisplayHomeAsUpEnabled(true)
             actionBar.title ="Add Contact"
         }
+
+        //create database
+        appDatabase = AppDatabase.getDatabase(this)
 
         //get contacts data from last activity
 

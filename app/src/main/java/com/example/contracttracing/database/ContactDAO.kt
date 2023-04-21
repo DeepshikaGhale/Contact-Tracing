@@ -7,6 +7,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
+//this class holds the queries for the table
 @Dao
 interface ContactDAO {
     @Query("SELECT * FROM contact_table ORDER BY name ASC")

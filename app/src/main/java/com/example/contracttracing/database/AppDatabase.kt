@@ -6,8 +6,10 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
+//creates the database in the local storage of the device
 @Database(entities = [Contact::class], version = 1)
 abstract class AppDatabase  : RoomDatabase(){
+    //an instance of DAO class is created to access all the queries
     abstract fun contactDao() : ContactDAO
 
     // using the singleton pattern:

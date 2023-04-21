@@ -76,10 +76,13 @@ class AddContact : AppCompatActivity() {
         // field validation
         if(name.isNotBlank() && number.isNotBlank()){
             val contact = Contact(null, name, number)
-            writeData(contact)
-//            addContact(name, number)
-            binding.nameId.text.clear()
-            binding.phoneNumberId.text.clear()
+            //validates the number
+            if (validateNumber(number)){
+                writeData(contact)
+                binding.nameId.text.clear()
+                binding.phoneNumberId.text.clear()
+            }
+
         }else{
             Toast.makeText(this, "Please enter required field", Toast.LENGTH_SHORT).show()
         }
@@ -88,12 +91,15 @@ class AddContact : AppCompatActivity() {
         if(contactName != null && contactNumber != null){
             binding.nameId.setText(contactName)
             binding.phoneNumberId.setText(contactNumber)
+            //update button name
+            binding.addContactBtn.text = "Update Contact"
         }
     }
 
     private fun writeData(contact: Contact){
         GlobalScope.launch (Dispatchers.IO){
             appDatabase.contactDao().insertContact(contact)
+            finish() // closes the add contact screen after data is added
         }
         Toast.makeText(this, "Data has been successfully added.", Toast.LENGTH_SHORT).show()
     }
@@ -103,18 +109,30 @@ class AddContact : AppCompatActivity() {
         var number = binding.phoneNumberId.text.toString()
 
         if(name.isNotBlank() && number.isNotBlank()){
+            //validates the number
+            if (validateNumber(number)){
+                GlobalScope.launch(Dispatchers.IO) {
+                    appDatabase.contactDao().updateContact(name, number, id.toString().toInt())
+                    finish()
+                }
+                Toast.makeText(this, "Data has been successfully updated.", Toast.LENGTH_SHORT).show()
 
-            GlobalScope.launch(Dispatchers.IO) {
-                appDatabase.contactDao().updateContact(name, number, id.toString().toInt())
-                finish()
+                binding.nameId.text.clear()
+                binding.phoneNumberId.text.clear()
             }
-            Toast.makeText(this, "Data has been successfully updated.", Toast.LENGTH_SHORT).show()
 
-            binding.nameId.text.clear()
-            binding.phoneNumberId.text.clear()
         }else{
             Toast.makeText(this, "Please enter required field", Toast.LENGTH_SHORT).show()
         }
 
+    }
+
+    //validate phone number data
+    private fun validateNumber(number: String): Boolean{
+        if(number.length < 10 || number.length > 10){
+            Toast.makeText(this, "Phone Number should of 10 digits.", Toast.LENGTH_SHORT).show()
+            return  true
+        }
+        return  false
     }
 }
